@@ -45,6 +45,7 @@
     </properties>
     
     <scm>
+        <url>http://github.com/paradoxical-io/dropwizard.swagger</url>
         <connection>
         	scm:git:git@github.com:paradoxical-io/dropwizard.swagger.git
         </connection>
@@ -52,6 +53,17 @@
             scm:git:git@github.com:paradoxical-io/dropwizard.swagger.git
         </developerConnection>
     </scm>
+
+    <developers>
+        <developer>
+            <id>devshorts</id>
+            <name>Anton Kropp</name>
+        </developer>
+        <developer>
+            <id>jakeswenson</id>
+            <name>Jake Swenson</name>
+        </developer>
+    </developers>
 
 
     <distributionManagement>
