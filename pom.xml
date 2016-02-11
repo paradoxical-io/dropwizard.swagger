@@ -11,7 +11,7 @@
     <artifactId>dropwizard-swagger</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    
+    <description>Swagger managment on the admin resource for dropwizard</description>
     <name>dropwizard-swagger</name>
     <url>http://maven.apache.org</url>
 
