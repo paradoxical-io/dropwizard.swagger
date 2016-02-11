@@ -9,7 +9,7 @@
     
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     
     <name>dropwizard-swagger</name>
@@ -51,8 +51,7 @@
         <developerConnection>
             scm:git:git@github.com:paradoxical-io/dropwizard.swagger.git
         </developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
 
     <distributionManagement>
