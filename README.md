@@ -3,9 +3,19 @@ dropwizard-swagger
 
 ![Build status](https://travis-ci.org/paradoxical-io/dropwizard.swagger.svg?branch=master)
 
-Wire in swagger for your dropwizar application. Also supports having a separate swagger api for your admin resource. This can be useful when creating private admin API's.  
+Wire in swagger for your dropwizard application. Also supports having a separate swagger api for your admin resource. This can be useful when creating private admin API's.  
 
 Currently supports dropwizard 0.9.1
+
+## Installation
+
+```
+<dependency>
+    <groupId>io.paradoxical</groupId>
+    <artifactId>dropwizard-swagger</artifactId>
+    <version>1.0</version>
+</dependency>
+```
 
 ## Configuring swagger 
 
