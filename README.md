@@ -1,6 +1,8 @@
 dropwizard-swagger
 ========================
 
+![Build status](https://travis-ci.org/paradoxical-io/dropwizard-swagger.svg?branch=master)
+
 Wire in swagger for your dropwizar application. Also supports having a separate swagger
 
 To configure your admin resource create a resource configurator
