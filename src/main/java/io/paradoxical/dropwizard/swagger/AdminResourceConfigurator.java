@@ -50,9 +50,7 @@ public class AdminResourceConfigurator implements Bundle {
     @Override
     public void run(final Environment environment) {
         adminResourceConfig = new DropwizardResourceConfig(environment.metrics());
-    }
 
-    public void complete(final Environment environment) {
         jerseyContainerHolder = new JerseyContainerHolder(new ServletContainer(adminResourceConfig));
 
         registrations.forEach(adminResourceConfig::register);

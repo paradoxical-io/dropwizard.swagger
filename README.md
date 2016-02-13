@@ -13,7 +13,7 @@ Currently supports dropwizard 0.9.1
 <dependency>
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 </dependency>
 ```
 
@@ -57,8 +57,8 @@ During run you can now manage your admin resource and enable swagger by passing 
 @Override
 public void run(ServiceConfiguration config, final Environment env) throws Exception {
     adminResourceConfigurator.enableSwagger(env, getAdminSwaggerScanner());
-
-    adminResourceConfigurator.register(AdminResource.class);
+    
+    adminResourceConfigurator.getAdminResourceConfig().register(AdminResource.class);
 }
 
 private BeanConfig getAdminSwaggerScanner() {
