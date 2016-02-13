@@ -3,6 +3,7 @@ package io.paradoxical.dropwizard.swagger;
 import io.dropwizard.Bundle;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewMessageBodyWriter;
@@ -10,6 +11,7 @@ import io.dropwizard.views.ViewRenderer;
 import io.dropwizard.views.mustache.MustacheViewRenderer;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
+import lombok.Getter;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import java.util.ArrayList;
@@ -20,7 +22,14 @@ public class AdminResourceConfigurator implements Bundle {
     private final List<Object> registrations;
     private final String adminRootPath;
 
+    @Getter
     private DropwizardResourceConfig adminResourceConfig;
+
+    @Getter
+    private JerseyEnvironment jerseyEnvironment;
+
+    @Getter
+    private JerseyContainerHolder jerseyContainerHolder;
 
     private AdminResourceConfigurator(
             final List<Object> registrations,
@@ -41,32 +50,28 @@ public class AdminResourceConfigurator implements Bundle {
     @Override
     public void run(final Environment environment) {
         adminResourceConfig = new DropwizardResourceConfig(environment.metrics());
+    }
 
-        JerseyContainerHolder adminContainerHolder = new JerseyContainerHolder(new ServletContainer(adminResourceConfig));
+    public void complete(final Environment environment) {
+        jerseyContainerHolder = new JerseyContainerHolder(new ServletContainer(adminResourceConfig));
 
         registrations.forEach(adminResourceConfig::register);
 
-        environment.admin().addServlet("admin-resources", adminContainerHolder.getContainer()).addMapping(adminRootPath);
+        environment.admin().addServlet("admin-resources", jerseyContainerHolder.getContainer()).addMapping(adminRootPath);
+
+        jerseyEnvironment = new JerseyEnvironment(jerseyContainerHolder, adminResourceConfig);
     }
 
     public void enableSwagger(Environment environment, BeanConfig config) {
-        register(new SwaggerPagesResource());
+        adminResourceConfig.register(new SwaggerPagesResource());
 
-        register(new SwaggerApiResource(config));
+        adminResourceConfig.register(new SwaggerApiResource(config));
 
         final ViewMessageBodyWriter viewMessageBodyWriter = new ViewMessageBodyWriter(environment.metrics(), Collections.singletonList(new MustacheViewRenderer()));
 
-        register(viewMessageBodyWriter);
+        adminResourceConfig.register(viewMessageBodyWriter);
 
-        register(new SwaggerSerializers());
-    }
-
-    public void register(Object object) {
-        if (adminResourceConfig == null) {
-            throw new RuntimeException("Can not register until after bootstrap phase is complete!");
-        }
-
-        adminResourceConfig.register(object);
+        adminResourceConfig.register(new SwaggerSerializers());
     }
 
     public static class AdminResourceConfiguratorBuilder {
