@@ -47,7 +47,7 @@ public class SwaggerAssetsBundle extends AssetsBundle {
             throw new RuntimeException("Require either api provider or config provider");
         }
 
-        SwaggerApiResource apiResource = apiProvider == null ? new SwaggerApiResource(configProvider.apply(environment)) : apiProvider.apply(environment);
+        SwaggerApiProvider apiResource = apiProvider == null ? new SwaggerApiResource(configProvider.apply(environment)) : apiProvider.apply(environment);
 
         final ViewMessageBodyWriter viewMessageBodyWriter = new ViewMessageBodyWriter(environment.metrics(), Collections.singletonList(new MustacheViewRenderer()));
 

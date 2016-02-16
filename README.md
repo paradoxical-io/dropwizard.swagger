@@ -79,3 +79,41 @@ private BeanConfig getAdminSwaggerScanner() {
     return swagConfig;
 }
 ```
+
+## Overriding the swagger endpoint path
+
+If you want to change where swagger lives (i.e. instead of at the root, which is the default) you can subclass your pages:
+
+The index page that the swagger ui shows up at
+```
+@Path("/docs/api")
+@Produces(MediaType.TEXT_HTML)
+public class DocumentsPage extends SwaggerPagesResource {
+}
+```
+
+The backing swagger API
+
+```
+@Path("/docs/api")
+public class DocumentsPageApi extends SwaggerApiResource {
+    public DocumentsPageApi(@NonNull final BeanConfig swaggerConfig) {
+        super(swaggerConfig);
+    }
+}
+```
+
+Both pages MUST be at the same api path
+
+And register them with either the bundle provider:
+
+```
+bootstrap.addBundle(new SwaggerAssetsBundle((ApiProvider) environment -> new DocumentsPageApi(getPublicSwagger(environment)), new DocumentsPage()));
+```
+
+Or with the admin provider
+
+```
+adminResourceConfigurator.enableSwagger(env, new DocumentsPage(), new DocumentsPageApi(getAdminSwaggerScanner()));
+```
+
