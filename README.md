@@ -13,7 +13,7 @@ Currently supports dropwizard 0.9.1
 <dependency>
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 </dependency>
 ```
 
