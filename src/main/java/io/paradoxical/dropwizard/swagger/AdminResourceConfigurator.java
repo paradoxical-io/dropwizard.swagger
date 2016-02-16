@@ -61,10 +61,18 @@ public class AdminResourceConfigurator implements Bundle {
     }
 
     public void enableSwagger(Environment environment, BeanConfig config) {
-        adminResourceConfig.register(new SwaggerPagesResource());
+        enableSwagger(environment, new SwaggerPagesResource(), new SwaggerApiResource(config));
+    }
 
-        adminResourceConfig.register(new SwaggerApiResource(config));
+    public <T extends SwaggerPagesResource, Y extends SwaggerApiResource> void enableSwagger(Environment environment, T page, Y api) {
+        adminResourceConfig.register(page);
 
+        adminResourceConfig.register(api);
+
+        registerSwaggerDependencies(environment);
+    }
+
+    public void registerSwaggerDependencies(Environment environment) {
         final ViewMessageBodyWriter viewMessageBodyWriter = new ViewMessageBodyWriter(environment.metrics(), Collections.singletonList(new MustacheViewRenderer()));
 
         adminResourceConfig.register(viewMessageBodyWriter);
