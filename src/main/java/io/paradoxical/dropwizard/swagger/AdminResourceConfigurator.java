@@ -69,6 +69,10 @@ public class AdminResourceConfigurator implements Bundle {
 
         adminResourceConfig.register(api);
 
+        registerSwaggerDependencies(environment);
+    }
+
+    public void registerSwaggerDependencies(Environment environment) {
         final ViewMessageBodyWriter viewMessageBodyWriter = new ViewMessageBodyWriter(environment.metrics(), Collections.singletonList(new MustacheViewRenderer()));
 
         adminResourceConfig.register(viewMessageBodyWriter);
