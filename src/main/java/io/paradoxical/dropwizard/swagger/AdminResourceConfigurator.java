@@ -65,7 +65,7 @@ public class AdminResourceConfigurator implements Bundle {
     }
 
     public <T extends SwaggerPagesResource, Y extends SwaggerApiResource> void enableSwagger(Environment environment, T page, Y api) {
-        adminResourceConfig.register(new SwaggerPagesResource());
+        adminResourceConfig.register(page);
 
         adminResourceConfig.register(api);
 
