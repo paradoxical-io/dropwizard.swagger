@@ -9,7 +9,7 @@
     
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>1.2</version>
+    <version>1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Swagger managment on the admin resource for dropwizard</description>
     <name>dropwizard-swagger</name>
@@ -52,7 +52,7 @@
         <developerConnection>
             scm:git:git@github.com:paradoxical-io/dropwizard.swagger.git
         </developerConnection>
-      <tag>dropwizard-swagger-1.2</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <developers>
