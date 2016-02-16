@@ -18,10 +18,6 @@ public class SwaggerPagesResource {
         return new IndexView("/dropwizard-swagger/swagger.mustache");
     }
 
-    public String getApiBasePath(){
-        return "/";
-    }
-
     public static class IndexView extends View {
         protected IndexView(String templateName) {
             super(templateName);
