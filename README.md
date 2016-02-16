@@ -5,7 +5,7 @@ dropwizard-swagger
 
 Wire in swagger for your dropwizard application. Also supports having a separate swagger api for your admin resource. This can be useful when creating private admin API's.  
 
-Currently supports dropwizard 0.9.1
+Currently supports dropwizard 0.9.1 and uses swagger2
 
 ## Installation
 
