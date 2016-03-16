@@ -2,6 +2,7 @@ dropwizard-swagger
 ========================
 
 ![Build status](https://travis-ci.org/paradoxical-io/dropwizard.swagger.svg?branch=master)
+[![Maven Central](https://img.shields.io/maven-central/v/io.paradoxical/dropwizard-swagger.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aio.paradoxical%20a%3Adropwizard-swagger)
 
 Wire in swagger for your dropwizard application. Also supports having a separate swagger api for your admin resource. This can be useful when creating private admin API's.  
 
