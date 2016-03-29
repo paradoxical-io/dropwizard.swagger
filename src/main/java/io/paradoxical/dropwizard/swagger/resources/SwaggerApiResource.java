@@ -48,13 +48,12 @@ public class SwaggerApiResource {
     private static final com.godaddy.logging.Logger LOGGER = getLogger(SwaggerApiResource.class);
     private static final Object initializationLock = new Object();
     private final BeanConfig swaggerConfig;
+    private final ServletContext context;
 
-    public SwaggerApiResource(@NonNull BeanConfig swaggerConfig) {
+    public SwaggerApiResource(@NonNull BeanConfig swaggerConfig, @NonNull @Context ServletContext context) {
         this.swaggerConfig = swaggerConfig;
+        this.context = context;
     }
-
-    @Context
-    ServletContext context;
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;

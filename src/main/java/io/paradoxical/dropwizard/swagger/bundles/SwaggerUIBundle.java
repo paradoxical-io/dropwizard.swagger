@@ -10,7 +10,7 @@ public class SwaggerUIBundle extends AssetsBundle {
     private final SwaggerUIConfigurator swaggerUIConfigurator;
 
     public SwaggerUIBundle(@NonNull final SwaggerUIConfigurator swaggerUIConfigurator) {
-        super(DROPWIZARD_SWAGGER_ASSET_ROOT, DROPWIZARD_SWAGGER_ASSET_ROOT);
+        super(DROPWIZARD_SWAGGER_ASSET_ROOT, DROPWIZARD_SWAGGER_ASSET_ROOT, null, SwaggerUIBundle.class.getCanonicalName());
         this.swaggerUIConfigurator = swaggerUIConfigurator;
     }
 

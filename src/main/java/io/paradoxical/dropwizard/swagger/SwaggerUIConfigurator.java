@@ -13,19 +13,23 @@ import java.util.function.Function;
 public class SwaggerUIConfigurator {
     private final SwaggerResourcesLocator.Factory swaggerResourcesLocatorFactory;
 
+    @SuppressWarnings("WeakerAccess")
     public SwaggerUIConfigurator(@NonNull final SwaggerResourcesLocator.Factory swaggerResourcesLocatorFactory) {
         this.swaggerResourcesLocatorFactory = swaggerResourcesLocatorFactory;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public SwaggerUIConfigurator(@NonNull final SwaggerResourcesLocator swaggerResourcesLocator) {
         this(env -> swaggerResourcesLocator);
     }
 
-    public SwaggerUIConfigurator forConfig(@NonNull final SwaggerConfiguration swaggerConfiguration) {
+    @SuppressWarnings("unused")
+    public static SwaggerUIConfigurator forConfig(@NonNull final SwaggerConfiguration swaggerConfiguration) {
         return new SwaggerUIConfigurator(new DefaultSwaggerResourcesLocator(swaggerConfiguration));
     }
 
-    public SwaggerUIConfigurator forConfig(@NonNull final Function<Environment, SwaggerConfiguration> envConfigFunction) {
+    @SuppressWarnings("unused")
+    public static SwaggerUIConfigurator forConfig(@NonNull final Function<Environment, SwaggerConfiguration> envConfigFunction) {
         return new SwaggerUIConfigurator(env -> new DefaultSwaggerResourcesLocator(envConfigFunction.apply(env)));
     }
 

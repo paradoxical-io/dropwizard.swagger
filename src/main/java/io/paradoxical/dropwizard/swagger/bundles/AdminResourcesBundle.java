@@ -59,7 +59,7 @@ public final class AdminResourcesBundle implements Bundle {
 
     private static class SwaggerUIAdminAssetsBundle extends AdminAssetsBundle {
         public SwaggerUIAdminAssetsBundle() {
-            super(SwaggerUIBundle.DROPWIZARD_SWAGGER_ASSET_ROOT, SwaggerUIBundle.DROPWIZARD_SWAGGER_ASSET_ROOT);
+            super(SwaggerUIBundle.DROPWIZARD_SWAGGER_ASSET_ROOT, SwaggerUIBundle.DROPWIZARD_SWAGGER_ASSET_ROOT, null, SwaggerUIAdminAssetsBundle.class.getCanonicalName());
         }
     }
 }

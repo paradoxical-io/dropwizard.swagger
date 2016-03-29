@@ -6,11 +6,12 @@ import io.paradoxical.dropwizard.swagger.resources.SwaggerUIResource;
 
 import javax.ws.rs.Path;
 
+@Path("/swagger")
 public interface SwaggerResourcesLocator {
-    @Path("/")
+    @Path("/api")
     SwaggerApiResource api();
 
-    @Path("/swagger")
+    @Path("/ui")
     SwaggerUIResource ui();
 
     interface Factory {
