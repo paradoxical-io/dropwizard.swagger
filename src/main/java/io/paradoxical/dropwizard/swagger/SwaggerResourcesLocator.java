@@ -11,7 +11,7 @@ public interface SwaggerResourcesLocator {
     @Path("/api")
     SwaggerApiResource api();
 
-    @Path("/ui")
+    @Path("/")
     SwaggerUIResource ui();
 
     interface Factory {
