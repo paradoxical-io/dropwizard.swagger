@@ -1,4 +1,4 @@
-package io.paradoxical.dropwizard.swagger;
+package io.paradoxical.dropwizard.swagger.resources;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.config.FilterFactory;
@@ -44,17 +44,16 @@ import static com.godaddy.logging.LoggerFactory.getLogger;
  * Credits to @jakeswenson
  */
 @Path("/")
-public class SwaggerApiResource implements SwaggerApiProvider {
+public class SwaggerApiResource {
     private static final com.godaddy.logging.Logger LOGGER = getLogger(SwaggerApiResource.class);
     private static final Object initializationLock = new Object();
     private final BeanConfig swaggerConfig;
+    private final ServletContext context;
 
-    public SwaggerApiResource(@NonNull BeanConfig swaggerConfig) {
+    public SwaggerApiResource(@NonNull BeanConfig swaggerConfig, @NonNull @Context ServletContext context) {
         this.swaggerConfig = swaggerConfig;
+        this.context = context;
     }
-
-    @Context
-    ServletContext context;
 
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;

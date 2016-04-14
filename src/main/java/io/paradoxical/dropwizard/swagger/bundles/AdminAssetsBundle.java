@@ -1,18 +1,24 @@
-package io.paradoxical.dropwizard.swagger;
+package io.paradoxical.dropwizard.swagger.bundles;
 
 import com.google.common.base.Charsets;
 import io.dropwizard.Bundle;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.paradoxical.dropwizard.swagger.AssetsDefinition;
+import lombok.Getter;
+import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * A bundle for serving static asset files from the classpath.
  */
+@Getter
 public class AdminAssetsBundle implements Bundle {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminAssetsBundle.class);
 
@@ -20,10 +26,25 @@ public class AdminAssetsBundle implements Bundle {
     private static final String DEFAULT_INDEX_FILE = "index.htm";
     private static final String DEFAULT_PATH = "/assets";
 
+    public static final AssetsDefinition Defaults =
+            AssetsDefinition.builder()
+                            .resourcePath(DEFAULT_PATH)
+                            .uriPath(DEFAULT_PATH)
+                            .assetsName(DEFAULT_ASSETS_NAME)
+                            .indexFile(DEFAULT_INDEX_FILE)
+                            .build();
+
     private final String resourcePath;
     private final String uriPath;
     private final String indexFile;
     private final String assetsName;
+
+    public AdminAssetsBundle(@NonNull @Nonnull final AssetsDefinition assetsDefinition) {
+        this(assetsDefinition.resourcePath(),
+             assetsDefinition.uriPath(),
+             assetsDefinition.indexFile(),
+             assetsDefinition.assetsName());
+    }
 
     /**
      * Creates a new AdminAssetsBundle which serves up static assets from
@@ -32,7 +53,7 @@ public class AdminAssetsBundle implements Bundle {
      * @see AdminAssetsBundle#AdminAssetsBundle(String, String, String)
      */
     public AdminAssetsBundle() {
-        this(DEFAULT_PATH, DEFAULT_PATH, DEFAULT_INDEX_FILE, DEFAULT_ASSETS_NAME);
+        this(Defaults);
     }
 
     /**
@@ -41,11 +62,14 @@ public class AdminAssetsBundle implements Bundle {
      * {@code path} of {@code "/assets"}, {@code src/main/resources/assets/example.js} would be
      * served up from {@code /assets/example.js}.
      *
-     * @param path    the classpath and URI root of the static asset files
+     * @param path the classpath and URI root of the static asset files
      * @see AdminAssetsBundle#AdminAssetsBundle(String, String, String)
      */
     public AdminAssetsBundle(String path) {
-        this(path, path, DEFAULT_INDEX_FILE, DEFAULT_ASSETS_NAME);
+        this(Defaults.toBuilder()
+                     .resourcePath(path)
+                     .uriPath(path)
+                     .build());
     }
 
     /**
@@ -54,12 +78,15 @@ public class AdminAssetsBundle implements Bundle {
      * {@code resourcePath} of {@code "/assets"} and a uriPath of {@code "/js"},
      * {@code src/main/resources/assets/example.js} would be served up from {@code /js/example.js}.
      *
-     * @param resourcePath    the resource path (in the classpath) of the static asset files
-     * @param uriPath    the uri path for the static asset files
+     * @param resourcePath the resource path (in the classpath) of the static asset files
+     * @param uriPath      the uri path for the static asset files
      * @see AdminAssetsBundle#AdminAssetsBundle(String, String, String)
      */
     public AdminAssetsBundle(String resourcePath, String uriPath) {
-        this(resourcePath, uriPath, DEFAULT_INDEX_FILE, DEFAULT_ASSETS_NAME);
+        this(Defaults.toBuilder()
+                     .resourcePath(resourcePath)
+                     .uriPath(uriPath)
+                     .build());
     }
 
     /**
@@ -69,12 +96,16 @@ public class AdminAssetsBundle implements Bundle {
      * {@code resourcePath} of {@code "/assets"} and a uriPath of {@code "/js"},
      * {@code src/main/resources/assets/example.js} would be served up from {@code /js/example.js}.
      *
-     * @param resourcePath        the resource path (in the classpath) of the static asset files
-     * @param uriPath             the uri path for the static asset files
-     * @param indexFile           the name of the index file to use
+     * @param resourcePath the resource path (in the classpath) of the static asset files
+     * @param uriPath      the uri path for the static asset files
+     * @param indexFile    the name of the index file to use
      */
     public AdminAssetsBundle(String resourcePath, String uriPath, String indexFile) {
-        this(resourcePath, uriPath, indexFile, DEFAULT_ASSETS_NAME);
+        this(Defaults.toBuilder()
+                     .resourcePath(resourcePath)
+                     .uriPath(uriPath)
+                     .indexFile(indexFile)
+                     .build());
     }
 
     /**
@@ -84,10 +115,10 @@ public class AdminAssetsBundle implements Bundle {
      * {@code resourcePath} of {@code "/assets"} and a uriPath of {@code "/js"},
      * {@code src/main/resources/assets/example.js} would be served up from {@code /js/example.js}.
      *
-     * @param resourcePath        the resource path (in the classpath) of the static asset files
-     * @param uriPath             the uri path for the static asset files
-     * @param indexFile           the name of the index file to use
-     * @param assetsName          the name of servlet mapping used for this assets bundle
+     * @param resourcePath the resource path (in the classpath) of the static asset files
+     * @param uriPath      the uri path for the static asset files
+     * @param indexFile    the name of the index file to use
+     * @param assetsName   the name of servlet mapping used for this assets bundle
      */
     public AdminAssetsBundle(String resourcePath, String uriPath, String indexFile, String assetsName) {
         checkArgument(resourcePath.startsWith("/"), "%s is not an absolute path", resourcePath);
@@ -107,19 +138,9 @@ public class AdminAssetsBundle implements Bundle {
     public void run(Environment environment) {
         LOGGER.info("Registering AdminAssetBundle with name: {} for path {}", assetsName, uriPath + '*');
 
-        environment.admin().addServlet(assetsName, createServlet()).addMapping(uriPath + '*');
-    }
-
-    public String getResourcePath() {
-        return resourcePath;
-    }
-
-    public String getUriPath() {
-        return uriPath;
-    }
-
-    public String getIndexFile() {
-        return indexFile;
+        environment.admin()
+                   .addServlet(assetsName, createServlet())
+                   .addMapping(uriPath + '*');
     }
 
     protected AssetServlet createServlet() {

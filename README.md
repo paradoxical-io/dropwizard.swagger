@@ -4,7 +4,11 @@ dropwizard-swagger
 ![Build status](https://travis-ci.org/paradoxical-io/dropwizard.swagger.svg?branch=master)
 [![Maven Central](https://img.shields.io/maven-central/v/io.paradoxical/dropwizard-swagger.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aio.paradoxical%20a%3Adropwizard-swagger)
 
-Wire in swagger for your dropwizard application. Also supports having a separate swagger api for your admin resource. This can be useful when creating private admin API's.  
+Wire in swagger for your dropwizard application.
+Also supports having a separate swagger api for your admin resource.
+This can be useful when creating private admin API's.
+
+Default paths are `/swagger/ui` for the UI and `/swagger/api/swagger.{json, yaml}` for the api definition
 
 Currently supports dropwizard 0.9.1 and uses swagger2
 
@@ -14,107 +18,90 @@ Currently supports dropwizard 0.9.1 and uses swagger2
 <dependency>
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>1.2</version>
+    <version>2.0</version>
 </dependency>
 ```
 
-## Configuring swagger 
+## Adding swagger and swagger UI
+
+Adding swagger to your dropwizard application is as simple as adding the bundle to your application bootstrap
+
+```
+@Override
+public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
+    // enable swagger for application port
+    bootstrap.addBundle(
+        new SwaggerUIBundle(
+            SwaggerUIConfigurator.forConfig(env -> {
+                return new SwaggerConfiguration () {
+                    {
+                        setTitle("My API");
+                        setDescription("My API");
+
+                        // The package name to look for swagger resources under
+                        setResourcePackage(MyApplication.class.getPackage().getName());
+
+                        setLicense("Apache 2.0");
+                        setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
+
+                        setContact("admin@site.com");
+
+                        setPrettyPrint(true);
+
+                        setVersion("1.0");
+                    }
+                };
+            })));
+
+}
+```
+
+## Configuring admin swagger
 
 If you want to configure swagger for the admin resource create an admin resource configurator first.  This encapsulates registration and asset handling on the admin port.
-
-```
-AdminResourceConfigurator adminResourceConfigurator = 
-            AdminResourceConfigurator.builder()
-                                     .adminRootPath(ADMIN_ROOT)
-                                     .build();
-```
-
 To configure swagger, during initialization add the appropriate bundles.
 
 ```
 @Override
 public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
-    // enable swagger for public port
-    bootstrap.addBundle(new SwaggerAssetsBundle(this::getPublicSwagger));
-    
+
     // set up the configurator (swagger will be enabled on this later)
-    bootstrap.addBundle(adminResourceConfigurator);
-    
-    // add the swagger assets bundle. this must come after the resource configurator
-    // is added
-    bootstrap.addBundle(new SwaggerAdminAssetsBundle());
-}
+    bootstrap.addBundle(
+        AdminResourcesBundle.builder()
+                            .swaggerUIConfigurator(SwaggerUIConfigurator.forConfig(env -> {
+                                            return new SwaggerConfiguration () {
+                                                {
+                                                    setTitle("My ADMIN API");
+                                                    setDescription("My ADMIN API");
 
-private BeanConfig getPublicSwagger(Environment environment) {
-    ...
-}
+                                                    // The package name to look for swagger resources under
+                                                    setResourcePackage(MyApplication.class.getPackage().getName());
 
-```
+                                                    setLicense("Apache 2.0");
+                                                    setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
 
-During run you can now manage your admin resource and enable swagger by passing in the swagger config
+                                                    setContact("admin@site.com");
 
+                                                    setPrettyPrint(true);
 
-```
-@Override
-public void run(ServiceConfiguration config, final Environment env) throws Exception {
-    adminResourceConfigurator.enableSwagger(env, getAdminSwaggerScanner());
-    
-    adminResourceConfigurator.getAdminResourceConfig().register(AdminResource.class);
-}
-
-private BeanConfig getAdminSwaggerScanner() {
-
-    final BeanConfig swagConfig = new BeanConfig();
-    swagConfig.setTitle("Admin API");
-    swagConfig.setDescription("Admin API");
-    swagConfig.setLicense("Apache 2.0");
-    swagConfig.setResourcePackage(AdminResource.class.getPackage().getName());
-    swagConfig.setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
-    swagConfig.setContact("admin@site.com");
-    swagConfig.setPrettyPrint(true);
-
-    swagConfig.setVersion("1.0.1");
-
-    swagConfig.setBasePath("/admin");
-
-    return swagConfig;
+                                                    setVersion("1.0");
+                                                }
+                                            };
+                                        })).build());
 }
 ```
 
-## Overriding the swagger endpoint path
+## Overriding the swagger UI paths
 
-If you want to change where swagger lives (i.e. instead of at the root, which is the default) you can subclass your pages:
+If you want to change where swagger lives
+(i.e. instead of at the `/swagger/ui` and `/swagger/api/swagger.json`, which is the default)
+you can use a custom swagger resource locator your like:
 
-The index page that the swagger ui shows up at
-```
-@Path("/docs/api")
-@Produces(MediaType.TEXT_HTML)
-public class DocumentsPage extends SwaggerPagesResource {
-}
-```
-
-The backing swagger API
 
 ```
-@Path("/docs/api")
-public class DocumentsPageApi extends SwaggerApiResource {
-    public DocumentsPageApi(@NonNull final BeanConfig swaggerConfig) {
-        super(swaggerConfig);
-    }
-}
+@Path("/swagger-api-documentation")
+public class CustomSwaggerResourcesLocator extends DefaultSwaggerResourcesLocator {}
 ```
 
-Both pages MUST be at the same api path
-
-And register them with either the bundle provider:
-
-```
-bootstrap.addBundle(new SwaggerAssetsBundle((ApiProvider) environment -> new DocumentsPageApi(getPublicSwagger(environment)), new DocumentsPage()));
-```
-
-Or with the admin provider
-
-```
-adminResourceConfigurator.enableSwagger(env, new DocumentsPage(), new DocumentsPageApi(getAdminSwaggerScanner()));
-```
+And use one of the `SwaggerUIConfigurator` constructor that takes in a locator
 
