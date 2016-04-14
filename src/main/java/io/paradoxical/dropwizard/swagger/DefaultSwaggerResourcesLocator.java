@@ -1,5 +1,6 @@
 package io.paradoxical.dropwizard.swagger;
 
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import io.paradoxical.dropwizard.swagger.resources.SwaggerApiResource;
 import io.paradoxical.dropwizard.swagger.resources.SwaggerUIResource;
 import io.swagger.jaxrs.config.BeanConfig;
@@ -15,7 +16,6 @@ public class DefaultSwaggerResourcesLocator implements SwaggerResourcesLocator {
 
     @Getter
     private final BeanConfig swaggerConfig;
-
 
     @Context
     @Getter

@@ -2,4 +2,4 @@
 
 set -x
 
-mvn clean deploy --settings settings.xml -DskipTests
+mvn deploy --settings settings.xml -DskipTests

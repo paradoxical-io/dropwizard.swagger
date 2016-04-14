@@ -1,35 +1,38 @@
 package io.paradoxical.dropwizard.swagger.bundles;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Bundle;
-import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.paradoxical.dropwizard.swagger.SwaggerAssets;
+import io.paradoxical.dropwizard.swagger.SwaggerConfiguration;
 import io.paradoxical.dropwizard.swagger.SwaggerUIConfigurator;
-import io.paradoxical.dropwizard.swagger.bundles.AdminAssetsBundle;
-import io.paradoxical.dropwizard.swagger.resources.SwaggerUIResource;
 import lombok.Builder;
 import lombok.Singular;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("unused")
 public final class AdminResourcesBundle implements Bundle {
+    private static final CharMatcher wildcardMatcher = CharMatcher.anyOf("/*");
 
-    @Singular
     private final ImmutableList<Object> registrations;
     private final String adminRootPath;
     private final SwaggerUIConfigurator addSwaggerUI;
 
     @Builder
     private AdminResourcesBundle(
+            @Singular("register")
             final ImmutableList<Object> registrations,
             final String adminRootPath,
-            final SwaggerUIConfigurator swaggerUIConfigurator) {
+            @Nullable final SwaggerUIConfigurator swaggerUIConfigurator) {
         this.registrations = registrations == null ? ImmutableList.of() : registrations;
-        this.adminRootPath = adminRootPath == null ? "/admin/*" : adminRootPath;
+        this.adminRootPath = adminRootPath == null ? "/admin" : wildcardMatcher.trimTrailingFrom(adminRootPath);
         this.addSwaggerUI = swaggerUIConfigurator;
     }
 
@@ -48,18 +51,20 @@ public final class AdminResourcesBundle implements Bundle {
 
         registrations.forEach(adminResourceConfig::register);
 
-        environment.admin().addServlet("admin-resources", jerseyContainerHolder.getContainer()).addMapping(adminRootPath);
+        environment.admin().addServlet("admin-resources", jerseyContainerHolder.getContainer()).addMapping(adminRootPath + "/*");
 
         final JerseyEnvironment jerseyEnvironment = new JerseyEnvironment(jerseyContainerHolder, adminResourceConfig);
 
         if (addSwaggerUI != null) {
             addSwaggerUI.configure(environment, adminResourceConfig);
         }
+
+        adminResourceConfig.logComponents();
     }
 
     private static class SwaggerUIAdminAssetsBundle extends AdminAssetsBundle {
-        public SwaggerUIAdminAssetsBundle() {
-            super(SwaggerUIBundle.DROPWIZARD_SWAGGER_ASSET_ROOT, SwaggerUIBundle.DROPWIZARD_SWAGGER_ASSET_ROOT, null, SwaggerUIAdminAssetsBundle.class.getCanonicalName());
+        private SwaggerUIAdminAssetsBundle() {
+            super(SwaggerAssets.Assets);
         }
     }
 }
