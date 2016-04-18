@@ -1,13 +1,13 @@
 package io.paradoxical.dropwizard.swagger;
 
-import io.dropwizard.jersey.DropwizardResourceConfig;
+import com.google.common.collect.ImmutableList;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.mustache.MustacheViewRenderer;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import lombok.NonNull;
 
-import java.util.Collections;
 import java.util.function.Function;
 
 public class SwaggerUIConfigurator {
@@ -33,11 +33,14 @@ public class SwaggerUIConfigurator {
         return new SwaggerUIConfigurator(env -> new DefaultSwaggerResourcesLocator(envConfigFunction.apply(env)));
     }
 
-    public void configure(Environment environment, DropwizardResourceConfig resourceConfig) {
+    public void configure(Environment environment, JerseyEnvironment jerseyEnvironment) {
 
-        final ViewMessageBodyWriter viewMessageBodyWriter = new ViewMessageBodyWriter(environment.metrics(), Collections.singletonList(new MustacheViewRenderer()));
-        resourceConfig.register(viewMessageBodyWriter);
-        resourceConfig.register(new SwaggerSerializers());
-        resourceConfig.register(swaggerResourcesLocatorFactory.forEnvironment(environment));
+        final ViewMessageBodyWriter viewMessageBodyWriter =
+            new ViewMessageBodyWriter(environment.metrics(),
+                                      ImmutableList.of(new MustacheViewRenderer()));
+
+        jerseyEnvironment.register(viewMessageBodyWriter);
+        jerseyEnvironment.register(new SwaggerSerializers());
+        jerseyEnvironment.register(swaggerResourcesLocatorFactory.forEnvironment(environment));
     }
 }

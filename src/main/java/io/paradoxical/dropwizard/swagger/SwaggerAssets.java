@@ -9,11 +9,9 @@ public final class SwaggerAssets {
     public static final String DROPWIZARD_SWAGGER_ASSET_ROOT = "/dropwizard-swagger";
 
     public static final AssetsDefinition Assets =
-            AssetsDefinition.builder()
-                            .resourcePath(DROPWIZARD_SWAGGER_ASSET_ROOT)
-                            .uriPath(DROPWIZARD_SWAGGER_ASSET_ROOT)
-                            .assetsName(SwaggerUIBundle.class.getCanonicalName())
-                            .build();
-
-
+        AssetsDefinition.builder()
+                        .resourcePath(DROPWIZARD_SWAGGER_ASSET_ROOT)
+                        .uriPath(DROPWIZARD_SWAGGER_ASSET_ROOT)
+                        .assetsName(SwaggerUIBundle.class.getCanonicalName())
+                        .build();
 }
