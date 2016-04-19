@@ -24,15 +24,13 @@ public class SwaggerFilters {
     }
 
     public static SwaggerFilters withAnnotation(@NonNull Class<? extends Annotation> annotation) {
-        return builder()
-            .withAnnotation(annotation)
-            .build();
+        return builder().withAnnotation(annotation)
+                        .build();
     }
 
     public static SwaggerFilters withoutAnnotation(@NonNull Class<? extends Annotation> annotation) {
-        return builder()
-            .withoutAnnotation(annotation)
-            .build();
+        return builder().withoutAnnotation(annotation)
+                        .build();
     }
 
     public static class Builder {
