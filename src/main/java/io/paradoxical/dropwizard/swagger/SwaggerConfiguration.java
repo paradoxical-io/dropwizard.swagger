@@ -12,7 +12,7 @@ public class SwaggerConfiguration extends BeanConfig {
 
     @Getter
     @Setter
-    private SwaggerFilters filters;
+    private SwaggerFilters filters = SwaggerFilters.builder().build();
 
     @Override
     public Set<Class<?>> classes() {
