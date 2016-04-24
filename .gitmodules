@@ -1,0 +1,4 @@
+[submodule ".deployment"]
+	path = .deployment
+	url = https://github.com/paradoxical-io/deployment.git
+	branch = master

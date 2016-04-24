@@ -308,8 +308,8 @@
                             <defaultKeyring>false</defaultKeyring>
                             <keyname>476C78DF</keyname>
                             <passphrase>${env.GPG_PASSWORD}</passphrase>
-                            <publicKeyring>${project.basedir}/gpg/paradoxical-io.pubgpg</publicKeyring>
-                            <secretKeyring>${project.basedir}/gpg/paradoxical-io-private.gpg</secretKeyring>
+                            <publicKeyring>${project.basedir}/.deployment/gpg/paradoxical-io.pubgpg</publicKeyring>
+                            <secretKeyring>${project.basedir}/.deployment/gpg/paradoxical-io-private.gpg</secretKeyring>
                         </configuration>
                     </plugin>
                 </plugins>
