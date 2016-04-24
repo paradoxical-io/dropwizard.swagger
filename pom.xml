@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -9,7 +10,7 @@
 
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>2.2-SNAPSHOT</version>
+    <version>2.2${revision}</version>
     <packaging>jar</packaging>
     <description>Swagger management on the admin resource for dropwizard</description>
     <name>dropwizard-swagger</name>
@@ -24,6 +25,7 @@
     </licenses>
 
     <properties>
+        <revision>-SNAPSHOT</revision>
         <swagger.version>1.5.6</swagger.version>
         <dropwizard.version>0.9.2</dropwizard.version>
 
@@ -46,13 +48,13 @@
     <scm>
         <url>http://github.com/paradoxical-io/dropwizard.swagger</url>
         <connection>
-        	scm:git:git@github.com:paradoxical-io/dropwizard.swagger.git
+            scm:git:git@github.com:paradoxical-io/dropwizard.swagger.git
         </connection>
         <developerConnection>
             scm:git:git@github.com:paradoxical-io/dropwizard.swagger.git
         </developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <developers>
         <developer>
@@ -252,40 +254,43 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven.source.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
     <profiles>
         <profile>
-            <id>sign</id>
+            <id>release</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.source.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -300,8 +305,11 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <keyname>${env.GPG_USER}</keyname>
+                            <defaultKeyring>false</defaultKeyring>
+                            <keyname>476C78DF</keyname>
                             <passphrase>${env.GPG_PASSWORD}</passphrase>
+                            <publicKeyring>${project.basedir}/.deployment/gpg/paradoxical-io.pubgpg</publicKeyring>
+                            <secretKeyring>${project.basedir}/.deployment/gpg/paradoxical-io-private.gpg</secretKeyring>
                         </configuration>
                     </plugin>
                 </plugins>

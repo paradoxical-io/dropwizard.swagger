@@ -1,1 +1,0 @@
-mvn release:rollback; mvn release:clean
