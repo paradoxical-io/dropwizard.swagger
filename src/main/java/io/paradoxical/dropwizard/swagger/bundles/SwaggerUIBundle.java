@@ -1,7 +1,8 @@
 package io.paradoxical.dropwizard.swagger.bundles;
 
 import io.dropwizard.setup.Environment;
-import io.paradoxical.dropwizard.swagger.AssetsDefinition;
+import io.paradoxical.dropwizard.bundles.assets.AssetsDefinition;
+import io.paradoxical.dropwizard.bundles.assets.AssetsDefinitionBundle;
 import io.paradoxical.dropwizard.swagger.SwaggerAssets;
 import io.paradoxical.dropwizard.swagger.SwaggerUIConfigurator;
 import lombok.NonNull;
