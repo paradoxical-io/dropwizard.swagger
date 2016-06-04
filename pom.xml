@@ -25,7 +25,8 @@
     </licenses>
 
     <properties>
-        <revision>-SNAPSHOT</revision>
+        <revision.default>-SNAPSHOT</revision.default>
+        <revision>${revision.default}</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <swagger.version>1.5.6</swagger.version>
         <dropwizard.version>0.9.2</dropwizard.version>
@@ -263,6 +264,18 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>injected-nexus-deploy</id>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                        <configuration>
+                            <pomFile>${project.build.directory}/resolved-pom/pom.xml</pomFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
