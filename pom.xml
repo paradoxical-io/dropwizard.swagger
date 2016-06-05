@@ -427,10 +427,10 @@
                         </executions>
                         <configuration>
                             <defaultKeyring>false</defaultKeyring>
-                            <keyname>476C78DF</keyname>
-                            <passphrase>${env.GPG_PASSWORD}</passphrase>
                             <publicKeyring>${project.basedir}/.deployment/gpg/paradoxical-io.pubgpg</publicKeyring>
                             <secretKeyring>${project.basedir}/.deployment/gpg/paradoxical-io-private.gpg</secretKeyring>
+                            <keyname>476C78DF</keyname>
+                            <passphraseServerId>gpg-key</passphraseServerId>
                         </configuration>
                     </plugin>
                 </plugins>
