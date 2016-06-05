@@ -185,6 +185,15 @@
                 <targetPath>${project.build.directory}/resolved-pom/</targetPath>
                 <filtering>true</filtering>
             </resource>
+
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>pom.xml</include>
+                </includes>
+                <targetPath>META-INF/maven/${project.groupId}/${project.artifactId}/</targetPath>
+                <filtering>true</filtering>
+            </resource>
         </resources>
 
         <pluginManagement>
