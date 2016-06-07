@@ -93,6 +93,12 @@ public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
 }
 ```
 
+you should then be able to browse to the swagger ui on the admin port (8081 by default) under `/admin/swagger/ui`
+```
+http://localhost:8081/admin/swagger/ui
+```
+
+
 ## Overriding the swagger UI paths
 
 If you want to change where swagger lives
