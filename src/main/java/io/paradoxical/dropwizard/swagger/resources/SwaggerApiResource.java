@@ -42,6 +42,11 @@ import static com.godaddy.logging.LoggerFactory.getLogger;
  * which takes in a swagger scanner instantiated PER http context
  *
  * Credits to @jakeswenson
+ *
+ * @implNote This contains 2 differences from {@link ApiListingResource}
+ * in {@link #scan(Application, ServletConfig)} and
+ * in {@link #process(Application, ServletConfig, HttpHeaders, UriInfo)}
+ * See each method's doc comments for more details
  */
 @Path("/")
 public class SwaggerApiResource {
@@ -55,9 +60,17 @@ public class SwaggerApiResource {
         this.context = context;
     }
 
+    /**
+     * Contains change #1 (to use the passed in {@link #swaggerConfig} as the {@link Scanner}
+     * instead of using the static one normally set in {@link BeanConfig#setScan(boolean)})
+     * from {@link ApiListingResource#scan(Application, ServletConfig)}
+     * @param app used the same as in {@link ApiListingResource}
+     * @param sc used the same as in {@link ApiListingResource}
+     * @return the same as in {@link ApiListingResource}
+     */
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
-        Scanner scanner = swaggerConfig;
+        Scanner scanner = swaggerConfig; // Change #1a
         LOGGER.debug("using scanner " + scanner);
 
         if (scanner != null) {
@@ -72,7 +85,7 @@ public class SwaggerApiResource {
             else {
                 classes = scanner.classes();
             }
-            if (classes != null) {
+            if (classes != null) { // change #1b
                 Reader reader = new Reader(swagger, ReaderConfigUtils.getReaderConfig(context));
                 swagger = reader.read(classes);
                 swagger = swaggerConfig.configure(swagger);
@@ -83,19 +96,29 @@ public class SwaggerApiResource {
         return swagger;
     }
 
+    /**
+     * Contains change #2 (a per app context init key) from {@link ApiListingResource#process(Application, ServletConfig, HttpHeaders, UriInfo)}
+     * @param app used the same as in {@link ApiListingResource}
+     * @param sc used the same as in {@link ApiListingResource}
+     * @param headers used the same as in {@link ApiListingResource}
+     * @param uriInfo used the same as in {@link ApiListingResource}
+     * @return the same as in {@link ApiListingResource}
+     */
     private Swagger process(
             Application app,
             ServletConfig sc,
             HttpHeaders headers,
             UriInfo uriInfo) {
         Swagger swagger = (Swagger) context.getAttribute("swagger");
+
         synchronized (initializationLock) {
-            final String contextInitKey = "swagger-initialized";
+            final String contextInitKey = "swagger-initialized"; // Change #2
             if (context.getAttribute(contextInitKey) == null) {
                 swagger = scan(app, sc);
                 context.setAttribute(contextInitKey, new Object());
             }
         }
+
         if (swagger != null) {
             SwaggerSpecFilter filterImpl = FilterFactory.getFilter();
             if (filterImpl != null) {

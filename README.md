@@ -1,16 +1,16 @@
 dropwizard-swagger
 ========================
 
-![Build status](https://travis-ci.org/paradoxical-io/dropwizard.swagger.svg?branch=master)
+[![Build status](https://travis-ci.org/paradoxical-io/dropwizard.swagger.svg?branch=master)](https://travis-ci.org/paradoxical-io/dropwizard.swagger)
 [![Maven Central](https://img.shields.io/maven-central/v/io.paradoxical/dropwizard-swagger.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aio.paradoxical%20a%3Adropwizard-swagger)
 
 Wire in swagger for your dropwizard application.
 Also supports having a separate swagger api for your admin resource.
 This can be useful when creating private admin API's.
 
-Default paths are `/swagger/ui` for the UI and `/swagger/api/swagger.{json, yaml}` for the api definition
+Default ui paths are `/swagger/ui` for the UI and `/swagger/api/swagger.{json, yaml}` for the api swagger definition
 
-Currently supports dropwizard 0.9.1 and uses swagger2
+Currently supports dropwizard 0.9.2 and uses swagger2
 
 ## Installation
 
@@ -18,7 +18,7 @@ Currently supports dropwizard 0.9.1 and uses swagger2
 <dependency>
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>2.2</version>
+    <version>2.3</version>
 </dependency>
 ```
 
@@ -33,20 +33,18 @@ public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
     bootstrap.addBundle(
         new SwaggerUIBundle(
             SwaggerUIConfigurator.forConfig(env -> {
-                return new SwaggerConfiguration () {
+                return new AppSwaggerConfiguration(env) {
                     {
                         setTitle("My API");
                         setDescription("My API");
 
                         // The package name to look for swagger resources under
-                        setResourcePackage(MyApplication.class.getPackage().getName());
+                        setResourcePackage(App.class.getPackage().getName());
 
                         setLicense("Apache 2.0");
                         setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
 
-                        setContact("admin@site.com");
-
-                        setPrettyPrint(true);
+                        setContact("admin@paradoxical.io");
 
                         setVersion("1.0");
                     }
@@ -65,29 +63,33 @@ To configure swagger, during initialization add the appropriate bundles.
 @Override
 public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
 
-    // set up the configurator (swagger will be enabled on this later)
-    bootstrap.addBundle(
-        AdminResourcesBundle.builder()
-                            .swaggerUIConfigurator(SwaggerUIConfigurator.forConfig(env -> {
-                                            return new SwaggerConfiguration () {
-                                                {
-                                                    setTitle("My ADMIN API");
-                                                    setDescription("My ADMIN API");
+    final SwaggerUIConfigurator adminConfigurator = SwaggerUIConfigurator.forConfig(env -> {
+        return new AdminSwaggerConfiguration("/admin") {
+            {
+                setTitle("My Admin API");
+                setDescription("My Admin API");
 
-                                                    // The package name to look for swagger resources under
-                                                    setResourcePackage(MyApplication.class.getPackage().getName());
+                // The package name to look for swagger resources under
+                setResourcePackage(App.class.getPackage().getName());
 
-                                                    setLicense("Apache 2.0");
-                                                    setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
+                setLicense("Apache 2.0");
+                setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
 
-                                                    setContact("admin@site.com");
+                setContact("admin@paradoxical.com");
 
-                                                    setPrettyPrint(true);
+                setFilters(SwaggerFilters.withAnnotation(Path.class));
 
-                                                    setVersion("1.0");
-                                                }
-                                            };
-                                        })).build());
+                setVersion("1.0");
+            }
+        };
+    });
+
+    final AdminBundle adminBundle =
+        AdminBundle.builder()
+                   .configureEnvironment(AdminEnvironmentConfigurator.forJersey(adminConfigurator::configure))
+                   .build();
+
+    bootstrap.addBundle(adminBundle);
 }
 ```
 

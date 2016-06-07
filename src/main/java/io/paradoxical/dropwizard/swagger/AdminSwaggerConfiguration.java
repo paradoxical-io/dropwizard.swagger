@@ -11,18 +11,16 @@ public class AdminSwaggerConfiguration extends EnvironmentSwaggerConfiguration {
 
     private static final CharMatcher slashMatcher = CharMatcher.is('/');
 
-    protected AdminSwaggerConfiguration(
-        @Nullable final Environment environment,
-        final Function<Environment, MutableServletContextHandler> contextSelector) {
-        super(environment, contextSelector);
+    public AdminSwaggerConfiguration() {
+        super(null, Environment::getAdminContext);
     }
 
-    protected AdminSwaggerConfiguration(final String adminBasePath) {
-        this(null, Environment::getAdminContext);
+    public AdminSwaggerConfiguration(final String adminBasePath) {
+        this();
         setBasePath("/" + slashMatcher.trimFrom(adminBasePath));
     }
 
-    protected AdminSwaggerConfiguration(final Environment environment) {
-        this(environment, Environment::getAdminContext);
+    public AdminSwaggerConfiguration(@Nullable final Environment environment) {
+        super(environment, Environment::getAdminContext);
     }
 }
