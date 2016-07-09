@@ -1,16 +1,19 @@
 package io.paradoxical.dropwizard.swagger;
 
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.Configuration;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.mustache.MustacheViewRenderer;
+import io.paradoxical.dropwizard.bundles.admin.AdminEnvironmentConfigurator;
+import io.paradoxical.dropwizard.bundles.admin.AdminResourceEnvironment;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import lombok.NonNull;
 
 import java.util.function.Function;
 
-public class SwaggerUIConfigurator {
+public class SwaggerUIConfigurator implements AdminEnvironmentConfigurator {
     private final SwaggerResourcesLocator.Factory swaggerResourcesLocatorFactory;
 
     @SuppressWarnings("WeakerAccess")
@@ -42,5 +45,10 @@ public class SwaggerUIConfigurator {
         jerseyEnvironment.register(viewMessageBodyWriter);
         jerseyEnvironment.register(new SwaggerSerializers());
         jerseyEnvironment.register(swaggerResourcesLocatorFactory.forEnvironment(environment));
+    }
+
+    @Override
+    public void configure(Configuration configuration, AdminResourceEnvironment adminResourceEnvironment) {
+        AdminEnvironmentConfigurator.forJersey(this::configure).configure(configuration, adminResourceEnvironment);
     }
 }

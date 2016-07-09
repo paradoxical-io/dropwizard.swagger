@@ -86,7 +86,7 @@ public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
 
     final AdminBundle adminBundle =
         AdminBundle.builder()
-                   .configureEnvironment(AdminEnvironmentConfigurator.forJersey(adminConfigurator::configure))
+                   .configureEnvironment(adminConfigurator)
                    .build();
 
     bootstrap.addBundle(adminBundle);
