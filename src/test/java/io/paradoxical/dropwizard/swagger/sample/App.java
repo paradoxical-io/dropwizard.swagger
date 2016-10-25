@@ -14,9 +14,23 @@ import io.paradoxical.dropwizard.swagger.SwaggerUIConfigurator;
 import io.paradoxical.dropwizard.swagger.bundles.SwaggerUIAdminAssetsBundle;
 import io.paradoxical.dropwizard.swagger.bundles.SwaggerUIBundle;
 import io.swagger.models.Swagger;
+<<<<<<< HEAD
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.BasicAuthDefinition;
 import io.swagger.models.auth.In;
+=======
+import io.swagger.models.auth.BasicAuthDefinition;
+import io.swagger.models.auth.SecuritySchemeDefinition;
+
+import javax.ws.rs.Path;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Map;
+>>>>>>> Fix issue #14, and general cleanup
 
 public class App extends Application<Config> {
     public static void main(String... args) throws Exception {
