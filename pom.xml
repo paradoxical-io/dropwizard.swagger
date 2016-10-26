@@ -10,7 +10,7 @@
 
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>3.0${revision}</version>
+    <version>3.1${revision}</version>
     <packaging>jar</packaging>
     <description>Swagger management on the admin resource for dropwizard</description>
     <name>dropwizard-swagger</name>
