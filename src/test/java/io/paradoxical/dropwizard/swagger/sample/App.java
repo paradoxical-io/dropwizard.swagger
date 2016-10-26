@@ -1,6 +1,7 @@
 package io.paradoxical.dropwizard.swagger.sample;
 
 import io.dropwizard.Application;
+import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -13,17 +14,9 @@ import io.paradoxical.dropwizard.swagger.SwaggerUIConfigurator;
 import io.paradoxical.dropwizard.swagger.bundles.SwaggerUIAdminAssetsBundle;
 import io.paradoxical.dropwizard.swagger.bundles.SwaggerUIBundle;
 import io.swagger.models.Swagger;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.BasicAuthDefinition;
-import io.swagger.models.auth.SecuritySchemeDefinition;
-
-import javax.ws.rs.Path;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.Map;
+import io.swagger.models.auth.In;
 
 public class App extends Application<Config> {
     public static void main(String... args) throws Exception {
@@ -79,21 +72,31 @@ public class App extends Application<Config> {
             };
         }, new Swagger() {
             {
-                addSecurityDefinition("test", new BasicAuthDefinition());
+                addSecurityDefinition("basic", new BasicAuthDefinition());
+                addSecurityDefinition("token", new ApiKeyAuthDefinition("Authorization", In.HEADER));
             }
         });
 
         final AdminBundle adminBundle =
                 AdminBundle.builder()
                            .configureEnvironment(adminSwaggerConfigurator)
+                           .configureEnvironment(this::configureAdmin)
                            .build();
 
         bootstrap.addBundle(adminBundle);
     }
 
+    private void configureAdmin(final Configuration configuration, final AdminResourceEnvironment adminResourceEnvironment) {
+        adminResourceEnvironment.adminResourceConfig()
+                                .register(AdminTestResource.class);
+    }
+
+
     @Override
     public void run(Config configuration, Environment environment) {
         environment.jersey().register(TestResource.class);
+
+        // Another way of adding resources
         final AdminResourceEnvironment adminResourceEnvironment = AdminResourceEnvironment.getOrCreate(environment);
 
         adminResourceEnvironment.adminResourceConfig().register(TestResource.class);

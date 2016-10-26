@@ -1,6 +1,5 @@
 package io.paradoxical.dropwizard.swagger.resources;
 
-import io.dropwizard.views.View;
 import io.paradoxical.dropwizard.swagger.SwaggerAssets;
 import lombok.Getter;
 
@@ -21,8 +20,17 @@ public class SwaggerUIResource {
     @Getter
     private final String dropwizardSwaggerViewResourcePath = SwaggerAssets.DROPWIZARD_SWAGGER_ASSET_ROOT + "/swagger.mustache";
 
+    @Getter
+    private final String defaultSwaggerJsonPath = "../api/swagger.json";
+
+    @Getter
+    private final boolean useJsonEditor = false;
+
     @GET
-    public View handleSwagger() {
-        return new View(getDropwizardSwaggerViewResourcePath()) {};
+    public SwaggerUIView handleSwagger() {
+
+        return new SwaggerUIView(getDropwizardSwaggerViewResourcePath(),
+                                 getDefaultSwaggerJsonPath(),
+                                 isUseJsonEditor());
     }
 }

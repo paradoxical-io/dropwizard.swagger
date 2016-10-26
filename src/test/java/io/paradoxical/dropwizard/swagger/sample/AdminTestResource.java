@@ -11,9 +11,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/test")
+@Path("/hello-admin")
 @Produces(MediaType.APPLICATION_JSON)
-@Api(value = "Test")
+@Api(value = "Admin Test")
 @AdminOnly
 public class AdminTestResource {
 
@@ -23,12 +23,12 @@ public class AdminTestResource {
     @GET
     @Timed
     @ApiOperation(
-        value = "says hello",
+        value = "says hello admin",
         response = Object.class
     )
     public Response sayHello(@QueryParam("name") String name) {
         return Response.ok(new Object(){
-            public final String helloMessage = "Hello " + name;
+            public final String helloMessage = "Hello admin " + name;
         }).build();
     }
 }
