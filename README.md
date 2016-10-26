@@ -10,7 +10,7 @@ This can be useful when creating private admin API's.
 
 Default ui paths are `/swagger/ui` for the UI and `/swagger/api/swagger.{json, yaml}` for the api swagger definition
 
-Currently supports dropwizard 0.9.2 and uses swagger2
+Currently supports dropwizard 0.9.2 & 1.0.0 and uses swagger2
 
 ## Installation
 
@@ -18,7 +18,7 @@ Currently supports dropwizard 0.9.2 and uses swagger2
 <dependency>
     <groupId>io.paradoxical</groupId>
     <artifactId>dropwizard-swagger</artifactId>
-    <version>2.3</version>
+    <version>3.0</version>
 </dependency>
 ```
 
@@ -31,25 +31,24 @@ Adding swagger to your dropwizard application is as simple as adding the bundle 
 public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
     // enable swagger for application port
     bootstrap.addBundle(
-        new SwaggerUIBundle(
-            SwaggerUIConfigurator.forConfig(env -> {
-                return new AppSwaggerConfiguration(env) {
-                    {
-                        setTitle("My API");
-                        setDescription("My API");
+        new SwaggerUIBundle(env -> {
+            return new AppSwaggerConfiguration(env) {
+                {
+                    setTitle("My API");
+                    setDescription("My API");
 
-                        // The package name to look for swagger resources under
-                        setResourcePackage(App.class.getPackage().getName());
+                    // The package name to look for swagger resources under
+                    setResourcePackage(App.class.getPackage().getName());
 
-                        setLicense("Apache 2.0");
-                        setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
+                    setLicense("Apache 2.0");
+                    setLicenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html");
 
-                        setContact("admin@paradoxical.io");
+                    setContact("admin@paradoxical.io");
 
-                        setVersion("1.0");
-                    }
-                };
-            })));
+                    setVersion("1.0");
+                }
+            };
+        }));
 
 }
 ```
@@ -63,7 +62,7 @@ To configure swagger, during initialization add the appropriate bundles.
 @Override
 public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
 
-    final SwaggerUIConfigurator adminConfigurator = SwaggerUIConfigurator.forConfig(env -> {
+    final SwaggerUIConfigurator adminConfigurator = new SwaggerUIConfigurator(env -> {
         return new AdminSwaggerConfiguration("/admin") {
             {
                 setTitle("My Admin API");
@@ -77,6 +76,7 @@ public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
 
                 setContact("admin@paradoxical.com");
 
+                // Optional filters for swagger resources
                 setFilters(SwaggerFilters.withAnnotation(Path.class));
 
                 setVersion("1.0");
@@ -98,7 +98,6 @@ you should then be able to browse to the swagger ui on the admin port (8081 by d
 http://localhost:8081/admin/swagger/ui
 ```
 
-
 ## Overriding the swagger UI paths
 
 If you want to change where swagger lives
@@ -113,3 +112,6 @@ public class CustomSwaggerResourcesLocator extends DefaultSwaggerResourcesLocato
 
 And use one of the `SwaggerUIConfigurator` constructor that takes in a locator
 
+## More examples
+
+You can find a sample app in the tests folder [here](https://github.com/paradoxical-io/dropwizard.swagger/tree/master/src/test/java/io/paradoxical/dropwizard/swagger/sample)
