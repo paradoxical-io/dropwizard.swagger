@@ -16,6 +16,7 @@ import io.swagger.util.Yaml;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nonnull;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
@@ -43,7 +44,7 @@ import static com.godaddy.logging.LoggerFactory.getLogger;
  *
  * Credits to @jakeswenson
  *
- * @implNote This contains 2 differences from {@link ApiListingResource}
+ * @implNote This contains 3 differences from {@link ApiListingResource}
  * in {@link #scan(Application, ServletConfig)} and
  * in {@link #process(Application, ServletConfig, HttpHeaders, UriInfo)}
  * See each method's doc comments for more details
@@ -55,9 +56,21 @@ public class SwaggerApiResource {
     private final BeanConfig swaggerConfig;
     private final ServletContext context;
 
-    public SwaggerApiResource(@NonNull BeanConfig swaggerConfig, @NonNull @Context ServletContext context) {
+    private final Swagger defaultSwagger;
+
+    public SwaggerApiResource(
+            @NonNull BeanConfig swaggerConfig,
+            @NonNull @Context ServletContext context,
+            Swagger defaultSwagger) {
         this.swaggerConfig = swaggerConfig;
         this.context = context;
+        this.defaultSwagger = defaultSwagger;
+    }
+
+    public SwaggerApiResource(
+            @NonNull BeanConfig swaggerConfig,
+            @NonNull @Context ServletContext context) {
+        this(swaggerConfig, context, null);
     }
 
     /**
@@ -70,12 +83,18 @@ public class SwaggerApiResource {
      */
     protected synchronized Swagger scan(Application app, ServletConfig sc) {
         Swagger swagger = null;
-        Scanner scanner = swaggerConfig; // Change #1a
+        Scanner scanner = swaggerConfig; // Change #1a - don't use static factory
         LOGGER.debug("using scanner " + scanner);
 
         if (scanner != null) {
             SwaggerSerializers.setPrettyPrint(scanner.getPrettyPrint());
             swagger = (Swagger) context.getAttribute("swagger");
+
+            // change #3
+            // use default swagger if no context swagger
+            if (swagger == null) {
+                swagger = defaultSwagger;
+            }
 
             Set<Class<?>> classes;
             if (scanner instanceof JaxrsScanner) {
@@ -85,7 +104,8 @@ public class SwaggerApiResource {
             else {
                 classes = scanner.classes();
             }
-            if (classes != null) { // change #1b
+
+            if (classes != null) { // change #1b - simplify, since we know its a swagger config...
                 Reader reader = new Reader(swagger, ReaderConfigUtils.getReaderConfig(context));
                 swagger = reader.read(classes);
                 swagger = swaggerConfig.configure(swagger);

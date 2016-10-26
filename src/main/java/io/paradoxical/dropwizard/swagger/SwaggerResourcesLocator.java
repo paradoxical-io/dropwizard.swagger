@@ -3,6 +3,7 @@ package io.paradoxical.dropwizard.swagger;
 import io.dropwizard.setup.Environment;
 import io.paradoxical.dropwizard.swagger.resources.SwaggerApiResource;
 import io.paradoxical.dropwizard.swagger.resources.SwaggerUIResource;
+import io.swagger.models.Swagger;
 
 import javax.ws.rs.Path;
 
@@ -14,7 +15,8 @@ public interface SwaggerResourcesLocator {
     @Path("/ui")
     SwaggerUIResource ui();
 
+    @FunctionalInterface
     interface Factory {
-        SwaggerResourcesLocator forEnvironment(Environment environment);
+        SwaggerResourcesLocator create(Environment environment, Swagger defaultSwagger);
     }
 }
